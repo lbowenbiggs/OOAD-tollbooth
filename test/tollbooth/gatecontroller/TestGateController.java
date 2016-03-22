@@ -21,7 +21,7 @@ import tollbooth.TollboothException;
 public class TestGateController implements GateController
 {
 	boolean isOpen;
-	boolean failNextOpen;
+	int failNextNOpens;
 	
 	/**
 	 * Constructor for the test gate controller.
@@ -29,6 +29,7 @@ public class TestGateController implements GateController
 	public TestGateController()
 	{
 		isOpen = false;
+		failNextNOpens = 0;
 	}
 	
 	/*
@@ -37,6 +38,11 @@ public class TestGateController implements GateController
 	@Override
 	public void open() throws TollboothException
 	{
+		if (failNextNOpens > 0)
+		{
+			failNextNOpens -= 1;
+			throw new TollboothException("open: malfunction");
+		}
 		isOpen = true;
 	}
 
@@ -67,5 +73,10 @@ public class TestGateController implements GateController
 	public boolean isOpen() throws TollboothException
 	{
 		return isOpen;
+	}
+	
+	public void makeNextNOpensFail(int numberFails)
+	{
+		failNextNOpens = numberFails;
 	}
 }

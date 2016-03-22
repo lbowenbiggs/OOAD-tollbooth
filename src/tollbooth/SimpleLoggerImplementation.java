@@ -12,18 +12,23 @@
 
 package tollbooth;
 
-public class SimpleLoggerImplementation implements SimpleLogger {
+import java.util.LinkedList;
+import java.util.Queue;
 
+/**
+ * Implements the SimpleLogger Interface as a wrapper for a queue
+ */
+public class SimpleLoggerImplementation implements SimpleLogger {
+	private Queue<LogMessage> messageQueue = new LinkedList<LogMessage>();
+	
 	@Override
 	public void accept(LogMessage message) {
-		// TODO Auto-generated method stub
-
+		messageQueue.add(message);
 	}
 
 	@Override
 	public LogMessage getNextMessage() {
-		// TODO Auto-generated method stub
-		return new LogMessage("open: malfunction");
+		return messageQueue.remove();
 	}
 
 }

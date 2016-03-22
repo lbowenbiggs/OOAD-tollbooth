@@ -47,7 +47,8 @@ public class TollboothTest
 	public void gateControllerIsOpenAfterOpenMessage() throws TollboothException
 	{
 		final GateController controller = new TestGateController();
-		final TollGate gate = new TollGate(controller, null);
+		final SimpleLogger logger = new SimpleLoggerImplementation();
+		final TollGate gate = new TollGate(controller, logger);
 		gate.open();
 		assertTrue(gate.isOpen());
 	}
@@ -60,9 +61,10 @@ public class TollboothTest
 		 * current one to be programmed to fail opening one time before opening correctly.
 		 * You will also need to create your own instance of a SimpleLogger and pass it into the constructor. 
 		 */
-		final GateController controller = new TestGateController();
+		final TestGateController controller = new TestGateController();
 		final SimpleLogger logger = new SimpleLoggerImplementation();
 		final TollGate gate = new TollGate(controller, logger);
+		controller.makeNextNOpensFail(1);
 		gate.open();
 		LogMessage message = logger.getNextMessage();
 		assertEquals("open: malfunction", message.getMessage());
@@ -73,13 +75,13 @@ public class TollboothTest
 	@Test
 	public void gateOpensAfterTwoMalfunctions() throws TollboothException
 	{
-		final GateController controller = new TestGateController();
+		final TestGateController controller = new TestGateController();
 		final SimpleLogger logger = new SimpleLoggerImplementation();
 		final TollGate gate = new TollGate(controller, logger);
+		controller.makeNextNOpensFail(2);
 		gate.open();
 		LogMessage message = logger.getNextMessage();
 		assertEquals("open: malfunction", message.getMessage());
-		gate.open();
 		message = logger.getNextMessage();
 		assertEquals("open: malfunction", message.getMessage());
 		message = logger.getNextMessage();
@@ -89,20 +91,17 @@ public class TollboothTest
 	@Test
 	public void gateWillNotRespondAfterThreeOpens() throws TollboothException
 	{
-		final GateController controller = new TestGateController();
+		final TestGateController controller = new TestGateController();
 		final SimpleLogger logger = new SimpleLoggerImplementation();
 		final TollGate gate = new TollGate(controller, logger);
+		controller.makeNextNOpensFail(3);
 		gate.open();
 		LogMessage message = logger.getNextMessage();
 		assertEquals("open: malfunction", message.getMessage());
-		gate.open();
 		message = logger.getNextMessage();
 		assertEquals("open: malfunction", message.getMessage());
 		message = logger.getNextMessage();
 		assertEquals("open: malfunction", message.getMessage());
-		message = logger.getNextMessage();
-		assertEquals("open: unrecoverable malfunction", message.getMessage());
-		gate.open();
 		message = logger.getNextMessage();
 		assertEquals("open: unrecoverable malfunction", message.getMessage());
 	}
@@ -113,6 +112,7 @@ public class TollboothTest
 		final GateController controller = new TestGateController();
 		final SimpleLogger logger = new SimpleLoggerImplementation();
 		final TollGate gate = new TollGate(controller, logger);
+		gate.willNotRespond = true;
 		gate.open();
 		LogMessage message = logger.getNextMessage();
 		assertEquals("open: will not respond", message.getMessage());

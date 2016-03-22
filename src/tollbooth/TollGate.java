@@ -23,6 +23,8 @@ public class TollGate
 	private final GateController controller;
 	private final SimpleLogger logger;
 	
+	public boolean willNotRespond;
+	
 	/**
 	 * Constructor that takes the actual gate controller and the logger.
 	 * @param controller the GateController object.
@@ -31,6 +33,8 @@ public class TollGate
 	public TollGate(GateController controller, SimpleLogger logger) {
 		this.controller = controller;
 		this.logger = logger;
+		
+		willNotRespond = false;
 	}
 	
 	/**
@@ -39,7 +43,37 @@ public class TollGate
 	 */
 	public void open() throws TollboothException
 	{
-		controller.open();
+		int maxAttempts = 3;
+		int numAttempts = 0;
+		
+		if (willNotRespond)
+		{
+			logger.accept(new LogMessage("open: will not respond"));
+			return;
+		}
+		
+		while (!isOpen() || numAttempts < maxAttempts)
+		{
+			numAttempts++;
+			try 
+			{
+				controller.open();
+			} 
+			catch (TollboothException e)
+			{
+				logger.accept(new LogMessage("open: malfunction", e));
+			}
+		}
+		
+		if (isOpen())
+		{
+			logger.accept(new LogMessage("open: successful"));
+		}
+		else 
+		{
+			willNotRespond = true;
+			logger.accept(new LogMessage("open: unrecoverable malfunction"));
+		}
 	}
 	
 	/**
