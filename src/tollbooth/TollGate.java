@@ -52,7 +52,7 @@ public class TollGate
 			return;
 		}
 		
-		while (!isOpen() || numAttempts < maxAttempts)
+		while (!isOpen() && numAttempts < maxAttempts)
 		{
 			numAttempts++;
 			try 

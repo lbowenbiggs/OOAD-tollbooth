@@ -43,7 +43,10 @@ public class TestGateController implements GateController
 			failNextNOpens -= 1;
 			throw new TollboothException("open: malfunction");
 		}
-		isOpen = true;
+		else
+		{
+			isOpen = true;
+		}
 	}
 
 	/*
