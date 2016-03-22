@@ -23,7 +23,7 @@ public class TollGate
 	private final GateController controller;
 	private final SimpleLogger logger;
 	
-	public boolean willNotRespond;
+	private boolean willNotRespond;
 	
 	/**
 	 * Constructor that takes the actual gate controller and the logger.
@@ -39,12 +39,14 @@ public class TollGate
 	
 	/**
 	 * Open the gate.
-	 * @throws TollboothException
-	 */
+	
+	 * @throws TollboothException */
 	public void open() throws TollboothException
 	{
 		int maxAttempts = 3;
 		int numAttempts = 0;
+		
+		TollboothException lastFailureCause = new TollboothException("");
 		
 		if (willNotRespond)
 		{
@@ -62,6 +64,7 @@ public class TollGate
 			catch (TollboothException e)
 			{
 				logger.accept(new LogMessage("open: malfunction", e));
+				lastFailureCause = e;
 			}
 		}
 		
@@ -72,14 +75,14 @@ public class TollGate
 		else 
 		{
 			willNotRespond = true;
-			logger.accept(new LogMessage("open: unrecoverable malfunction"));
+			logger.accept(new LogMessage("open: unrecoverable malfunction", lastFailureCause));
 		}
 	}
 	
 	/**
 	 * Close the gate
-	 * @throws TollboothException
-	 */
+	
+	 * @throws TollboothException */
 	public void close() throws TollboothException
 	{
 		// To be completed
@@ -88,8 +91,8 @@ public class TollGate
 	/**
 	 * Reset the gate to the state it was in when created with the exception of the
 	 * statistics.
-	 * @throws TollboothException
-	 */
+	
+	 * @throws TollboothException */
 	public void reset() throws TollboothException
 	{
 		// To be completed
@@ -122,5 +125,14 @@ public class TollGate
 	{
 		// To be completed
 		return -1;
+	}
+	
+	/**
+	 * Method makeNonResponsive.
+	 * Sets willNotRespond to true
+	 */
+	public void makeNonResponsive()
+	{
+		willNotRespond = true;
 	}
 }

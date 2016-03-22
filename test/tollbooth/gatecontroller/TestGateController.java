@@ -78,6 +78,12 @@ public class TestGateController implements GateController
 		return isOpen;
 	}
 	
+	/**
+	 * Method makeNextNOpensFail sets the number of failures that will
+	 * occur before a successful open() 
+	 * 
+	 * @param numberFails the number of times open() should fail 
+	 */
 	public void makeNextNOpensFail(int numberFails)
 	{
 		failNextNOpens = numberFails;

@@ -1,3 +1,4 @@
+// $codepro.audit.disable methodJavadoc
 /*******************************************************************************
  * This files was developed for CS4233: Object-Oriented Analysis & Design.
  * The course was taken at Worcester Polytechnic Institute.
@@ -49,6 +50,17 @@ public class TollboothTest
 		final GateController controller = new TestGateController();
 		final SimpleLogger logger = new SimpleLoggerImplementation();
 		final TollGate gate = new TollGate(controller, logger);
+		gate.open();
+		assertTrue(gate.isOpen());
+	}
+	
+	@Test
+	public void gateControllerIsOpenAfterTwoOpens() throws TollboothException
+	{
+		final GateController controller = new TestGateController();
+		final SimpleLogger logger = new SimpleLoggerImplementation();
+		final TollGate gate = new TollGate(controller, logger);
+		gate.open();
 		gate.open();
 		assertTrue(gate.isOpen());
 	}
@@ -112,7 +124,7 @@ public class TollboothTest
 		final GateController controller = new TestGateController();
 		final SimpleLogger logger = new SimpleLoggerImplementation();
 		final TollGate gate = new TollGate(controller, logger);
-		gate.willNotRespond = true;
+		gate.makeNonResponsive();
 		gate.open();
 		LogMessage message = logger.getNextMessage();
 		assertEquals("open: will not respond", message.getMessage());
