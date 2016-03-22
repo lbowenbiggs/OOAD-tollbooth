@@ -61,7 +61,7 @@ public class TollboothTest
 		 * You will also need to create your own instance of a SimpleLogger and pass it into the constructor. 
 		 */
 		final GateController controller = new TestGateController();
-		final SimpleLogger logger = null;		// put in an instance of your SimpleLogger implementation
+		final SimpleLogger logger = new SimpleLoggerImplementation();
 		final TollGate gate = new TollGate(controller, logger);
 		gate.open();
 		LogMessage message = logger.getNextMessage();
