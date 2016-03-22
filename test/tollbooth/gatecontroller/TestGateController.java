@@ -21,6 +21,8 @@ import tollbooth.TollboothException;
 public class TestGateController implements GateController
 {
 	boolean isOpen;
+	boolean failNextOpen;
+	
 	/**
 	 * Constructor for the test gate controller.
 	 */
@@ -66,5 +68,4 @@ public class TestGateController implements GateController
 	{
 		return isOpen;
 	}
-
 }

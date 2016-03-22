@@ -70,4 +70,51 @@ public class TollboothTest
 		assertEquals("open: successful", message.getMessage());
 	}
 	
+	@Test
+	public void gateOpensAfterTwoMalfunctions() throws TollboothException
+	{
+		final GateController controller = new TestGateController();
+		final SimpleLogger logger = new SimpleLoggerImplementation();
+		final TollGate gate = new TollGate(controller, logger);
+		gate.open();
+		LogMessage message = logger.getNextMessage();
+		assertEquals("open: malfunction", message.getMessage());
+		gate.open();
+		message = logger.getNextMessage();
+		assertEquals("open: malfunction", message.getMessage());
+		message = logger.getNextMessage();
+		assertEquals("open: successful", message.getMessage());
+	}
+	
+	@Test
+	public void gateWillNotRespondAfterThreeOpens() throws TollboothException
+	{
+		final GateController controller = new TestGateController();
+		final SimpleLogger logger = new SimpleLoggerImplementation();
+		final TollGate gate = new TollGate(controller, logger);
+		gate.open();
+		LogMessage message = logger.getNextMessage();
+		assertEquals("open: malfunction", message.getMessage());
+		gate.open();
+		message = logger.getNextMessage();
+		assertEquals("open: malfunction", message.getMessage());
+		message = logger.getNextMessage();
+		assertEquals("open: malfunction", message.getMessage());
+		message = logger.getNextMessage();
+		assertEquals("open: unrecoverable malfunction", message.getMessage());
+		gate.open();
+		message = logger.getNextMessage();
+		assertEquals("open: unrecoverable malfunction", message.getMessage());
+	}
+	
+	@Test
+	public void gateWillNotRespond() throws TollboothException
+	{
+		final GateController controller = new TestGateController();
+		final SimpleLogger logger = new SimpleLoggerImplementation();
+		final TollGate gate = new TollGate(controller, logger);
+		gate.open();
+		LogMessage message = logger.getNextMessage();
+		assertEquals("open: will not respond", message.getMessage());
+	}
 }
