@@ -85,7 +85,40 @@ public class TollGate
 	 * @throws TollboothException */
 	public void close() throws TollboothException
 	{
-		// To be completed
+		int maxAttempts = 3;
+		int numAttempts = 0;
+		
+		TollboothException lastFailureCause = new TollboothException("");
+		
+		if (willNotRespond)
+		{
+			logger.accept(new LogMessage("close: will not respond"));
+			return;
+		}
+		
+		while (isOpen() && numAttempts < maxAttempts)
+		{
+			numAttempts++;
+			try 
+			{
+				controller.close();
+			} 
+			catch (TollboothException e)
+			{
+				logger.accept(new LogMessage("close: malfunction", e));
+				lastFailureCause = e;
+			}
+		}
+		
+		if (!isOpen())
+		{
+			logger.accept(new LogMessage("close: successful"));
+		}
+		else 
+		{
+			willNotRespond = true;
+			logger.accept(new LogMessage("close: unrecoverable malfunction", lastFailureCause));
+		}
 	}
 	
 	/**
@@ -134,5 +167,10 @@ public class TollGate
 	public void makeNonResponsive()
 	{
 		willNotRespond = true;
+	}
+	
+	public boolean isResponsive()
+	{
+		return !willNotRespond;
 	}
 }

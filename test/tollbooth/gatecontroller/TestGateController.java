@@ -21,7 +21,7 @@ import tollbooth.TollboothException;
 public class TestGateController implements GateController
 {
 	boolean isOpen;
-	int failNextNOpens;
+	int failNextNTries;
 	
 	/**
 	 * Constructor for the test gate controller.
@@ -29,7 +29,7 @@ public class TestGateController implements GateController
 	public TestGateController()
 	{
 		isOpen = false;
-		failNextNOpens = 0;
+		failNextNTries = 0;
 	}
 	
 	/*
@@ -38,9 +38,9 @@ public class TestGateController implements GateController
 	@Override
 	public void open() throws TollboothException
 	{
-		if (failNextNOpens > 0)
+		if (failNextNTries > 0)
 		{
-			failNextNOpens -= 1;
+			failNextNTries -= 1;
 			throw new TollboothException("open: malfunction");
 		}
 		else
@@ -55,8 +55,15 @@ public class TestGateController implements GateController
 	@Override
 	public void close() throws TollboothException
 	{
-		// TODO Auto-generated method stub
-
+		if (failNextNTries > 0)
+		{
+			failNextNTries -= 1;
+			throw new TollboothException("close: malfunction");
+		}
+		else
+		{
+			isOpen = false;
+		}
 	}
 
 	/*
@@ -79,13 +86,13 @@ public class TestGateController implements GateController
 	}
 	
 	/**
-	 * Method makeNextNOpensFail sets the number of failures that will
-	 * occur before a successful open() 
+	 * Method makeNextNTriesFail sets the number of failures that will
+	 * occur before a successful open() or close()
 	 * 
-	 * @param numberFails the number of times open() should fail 
+	 * @param numberFails the number of times it should fail 
 	 */
-	public void makeNextNOpensFail(int numberFails)
+	public void makeNextNTriesFail(int numberFails)
 	{
-		failNextNOpens = numberFails;
+		failNextNTries = numberFails;
 	}
 }
