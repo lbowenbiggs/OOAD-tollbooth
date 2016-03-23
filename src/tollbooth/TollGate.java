@@ -58,7 +58,9 @@ public class TollGate
 		}
 		
 		if (isOpen())
+		{
 			return;
+		}
 		
 		while (!isOpen() && numAttempts < maxAttempts)
 		{
@@ -103,7 +105,9 @@ public class TollGate
 		}
 		
 		if (!isOpen())
+		{
 			return;
+		}
 		
 		while (isOpen() && numAttempts < maxAttempts)
 		{
