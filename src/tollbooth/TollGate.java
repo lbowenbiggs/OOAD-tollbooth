@@ -24,6 +24,10 @@ public class TollGate
 	private final SimpleLogger logger;
 	
 	private boolean willNotRespond;
+	private int maxAttempts = 3;
+	
+	private int numberOpens = 0;
+	private int numberCloses = 0;
 	
 	/**
 	 * Constructor that takes the actual gate controller and the logger.
@@ -43,7 +47,6 @@ public class TollGate
 	 * @throws TollboothException */
 	public void open() throws TollboothException
 	{
-		int maxAttempts = 3;
 		int numAttempts = 0;
 		
 		TollboothException lastFailureCause = new TollboothException("");
@@ -53,6 +56,9 @@ public class TollGate
 			logger.accept(new LogMessage("open: will not respond"));
 			return;
 		}
+		
+		if (isOpen())
+			return;
 		
 		while (!isOpen() && numAttempts < maxAttempts)
 		{
@@ -71,6 +77,7 @@ public class TollGate
 		if (isOpen())
 		{
 			logger.accept(new LogMessage("open: successful"));
+			numberOpens++;
 		}
 		else 
 		{
@@ -85,7 +92,6 @@ public class TollGate
 	 * @throws TollboothException */
 	public void close() throws TollboothException
 	{
-		int maxAttempts = 3;
 		int numAttempts = 0;
 		
 		TollboothException lastFailureCause = new TollboothException("");
@@ -95,6 +101,9 @@ public class TollGate
 			logger.accept(new LogMessage("close: will not respond"));
 			return;
 		}
+		
+		if (!isOpen())
+			return;
 		
 		while (isOpen() && numAttempts < maxAttempts)
 		{
@@ -113,6 +122,7 @@ public class TollGate
 		if (!isOpen())
 		{
 			logger.accept(new LogMessage("close: successful"));
+			numberCloses++;
 		}
 		else 
 		{
@@ -128,7 +138,34 @@ public class TollGate
 	 * @throws TollboothException */
 	public void reset() throws TollboothException
 	{
-		// To be completed
+		int numAttempts = 0;
+		
+		TollboothException lastFailureCause = new TollboothException("");
+		
+		while (isOpen() && numAttempts < maxAttempts)
+		{
+			numAttempts++;
+			try 
+			{
+				controller.reset();
+			} 
+			catch (TollboothException e)
+			{
+				logger.accept(new LogMessage("reset: malfunction", e));
+				lastFailureCause = e;
+			}
+		}
+		
+		if (!isOpen())
+		{
+			logger.accept(new LogMessage("reset: successful"));
+			willNotRespond = false;
+		}
+		else 
+		{
+			willNotRespond = true;
+			logger.accept(new LogMessage("reset: unrecoverable malfunction", lastFailureCause));
+		}
 	}
 	
 	/**
@@ -146,8 +183,7 @@ public class TollGate
 	 */
 	public int getNumberOfOpens()
 	{
-		// To be completed
-		return -1;
+		return numberOpens;
 	}
 	
 	/**
@@ -156,8 +192,7 @@ public class TollGate
 	 */
 	public int getNumberOfCloses()
 	{
-		// To be completed
-		return -1;
+		return numberCloses;
 	}
 	
 	/**

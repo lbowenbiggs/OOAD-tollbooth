@@ -72,8 +72,15 @@ public class TestGateController implements GateController
 	@Override
 	public void reset() throws TollboothException
 	{
-		// TODO Auto-generated method stub
-
+		if (failNextNTries > 0)
+		{
+			failNextNTries -= 1;
+			throw new TollboothException("reset: malfunction");
+		}
+		else
+		{
+			isOpen = false;
+		}
 	}
 
 	/*
